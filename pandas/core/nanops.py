@@ -199,11 +199,13 @@ def _get_fill_value(
             else:
                 return -np.inf
     else:
+        # np.int64 so that np.where promotes instead of raising OverflowError
+        #  (numpy >= 2.5) when the value doesn't fit the array's dtype
         if fill_value_typ == "+inf":
             # need the max int here
-            return lib.i8max
+            return np.int64(lib.i8max)
         else:
-            return iNaT
+            return np.int64(iNaT)
 
 
 def _maybe_get_mask(
