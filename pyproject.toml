@@ -529,6 +529,8 @@ filterwarnings = [
   "ignore:.*In the future `np.long` will be defined as.*:FutureWarning",
   # https://github.com/numpy/numpy/pull/29301
   "ignore:.*align should be passed:",
+  # numpy 2.5; many tests build unit-less NaT/timedelta64 scalars on purpose
+  "ignore:The 'generic' unit for NumPy timedelta is deprecated:DeprecationWarning",
 ]
 junit_family = "xunit2"
 markers = [
