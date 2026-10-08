@@ -31,6 +31,7 @@ from pandas._libs.tslibs.timezones import (
     tz_compare,
 )
 from pandas.compat import IS64
+from pandas.compat.numpy import np_version_gt2_5
 
 from pandas import (
     NaT,
@@ -638,9 +639,11 @@ class TestNonNano:
         #  nanosecond implementation bounds.
         other = Timestamp(dt64 - 3600 * 24).as_unit("ns")
         assert other < ts
-        assert other.asm8 > ts.asm8  # <- numpy gets this wrong
+        if not np_version_gt2_5:
+            assert other.asm8 > ts.asm8  # <- numpy gets this wrong
         assert ts > other
-        assert ts.asm8 < other.asm8  # <- numpy gets this wrong
+        if not np_version_gt2_5:
+            assert ts.asm8 < other.asm8  # <- numpy gets this wrong
         assert not other == ts
         assert ts != other
 
