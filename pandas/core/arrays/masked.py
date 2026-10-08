@@ -578,7 +578,13 @@ class BaseMaskedArray(OpsMixin, ExtensionArray):
             # In astype, we consider dtype=float to also mean na_value=np.nan
             na_value = np.nan
         elif dtype.kind == "M":
-            na_value = np.datetime64("NaT")
+            unit = np.datetime_data(dtype)[0]
+            if unit == "generic":
+                # numpy deprecates a unitless NaT; the cast is rejected
+                #  downstream, so the sentinel goes unused
+                na_value = lib.no_default
+            else:
+                na_value = np.datetime64("NaT", unit)  # type: ignore[call-overload]
         else:
             na_value = lib.no_default
 
@@ -899,7 +905,8 @@ class BaseMaskedArray(OpsMixin, ExtensionArray):
             # e.g. test_numeric_arr_mul_tdscalar_numexpr_path
             from pandas.core.arrays import TimedeltaArray
 
-            result[mask] = result.dtype.type("NaT")
+            unit = np.datetime_data(result.dtype)[0]
+            result[mask] = np.timedelta64("NaT", unit)  # type: ignore[call-overload]
 
             if not isinstance(result, TimedeltaArray):
                 return TimedeltaArray._simple_new(result, dtype=result.dtype)

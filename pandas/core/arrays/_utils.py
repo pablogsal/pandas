@@ -49,9 +49,11 @@ def to_numpy_dtype_inference(
         elif dtype.kind == "f":  # type: ignore[union-attr]
             na_value = np.nan
         elif dtype.kind == "M":  # type: ignore[union-attr]
-            na_value = np.datetime64("nat")
+            unit = np.datetime_data(dtype)[0]  # type: ignore[arg-type]
+            na_value = np.datetime64("NaT", unit)  # type: ignore[call-overload]
         elif dtype.kind == "m":  # type: ignore[union-attr]
-            na_value = np.timedelta64("nat")
+            unit = np.datetime_data(dtype)[0]  # type: ignore[arg-type]
+            na_value = np.timedelta64("NaT", unit)  # type: ignore[call-overload]
         else:
             na_value = arr.dtype.na_value
 

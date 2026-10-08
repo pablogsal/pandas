@@ -1379,7 +1379,7 @@ cdef class _Timedelta(timedelta):
         >>> td.view(int)
         259200000000000
         """
-        return np.timedelta64(self._value).view(dtype)
+        return np.timedelta64(self._value, self.unit).view(dtype)
 
     @property
     def components(self):
@@ -1808,7 +1808,8 @@ class Timedelta(_Timedelta):
                     int(ns)
                     + int(us * 1_000)
                     + int(ms * 1_000_000)
-                    + seconds
+                    + seconds,
+                    "ns",
                 )
             except OverflowError as err:
                 # GH#55503
@@ -1842,7 +1843,7 @@ class Timedelta(_Timedelta):
                 value = parse_iso_format_string(value)
             else:
                 value = parse_timedelta_string(value)
-            value = np.timedelta64(value)
+            value = np.timedelta64(value, "ns")
         elif PyDelta_Check(value):
             # pytimedelta object -> microsecond resolution
             new_value = delta_to_nanoseconds(
