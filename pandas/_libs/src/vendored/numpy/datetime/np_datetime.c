@@ -22,10 +22,13 @@ This file is derived from NumPy 1.7. See NUMPY_LICENSE.txt
 
 #include <Python.h>
 
-#include "pandas/vendored/numpy/datetime/np_datetime.h"
-
+// NO_IMPORT_ARRAY and PY_ARRAY_UNIQUE_SYMBOL must be defined before the
+// np_datetime.h include, otherwise the numpy C-API symbol import breaks
+// on numpy >= 2.5 (backport of GH#65569).
 #define NO_IMPORT_ARRAY
 #define PY_ARRAY_UNIQUE_SYMBOL PANDAS_DATETIME_NUMPY
+#include "pandas/vendored/numpy/datetime/np_datetime.h"
+
 #include <numpy/ndarrayobject.h>
 #include <numpy/npy_common.h>
 
