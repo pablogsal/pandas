@@ -728,6 +728,11 @@ cdef tzinfo _parse_with_format(
             tz = pytz.timezone(found_dict["Z"])
         elif parse_code == 19:
             # e.g. val='March 1, 2018 12:00:00+0400'; fmt='%B %d, %Y %H:%M:%S%z'
+            if not found_dict["z"]:
+                # Python 3.15 made %z optional in _strptime.TimeRE
+                raise ValueError(
+                    f"time data \"{val}\" doesn't match format \"{fmt}\""
+                )
             tz = parse_timezone_directive(found_dict["z"])
         elif parse_code == 20:
             # e.g. val='2015-1-7'; fmt='%G-%V-%u'
